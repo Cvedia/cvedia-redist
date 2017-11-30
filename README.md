@@ -1,10 +1,14 @@
-# What is this?
+# Documentation
 
-This is a tool that shows the API functionality of CVEDIA API.
+Full documentation of CVEDIA API is available on https://docs.cvedia.com
 
-# How to install?
+# What is this
 
-This script requires python
+This is a collection of tools that shows the API functionality of CVEDIA API.
+
+# How to install
+
+You can test either in python or php.
 
 ### Linux install
 
