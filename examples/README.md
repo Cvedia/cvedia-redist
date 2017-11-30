@@ -27,6 +27,16 @@ an annotation.
 - `annotation.json`: Contains a annotation to `image.png` with `image_path` reference
 - `image.png`: This is not required for the test, since the image is sent as base64
 
+#### Running
+
+You must upload the image first:
+
+`python cvedia_api.py --dataset_index <index_name> --upload examples/image.json`
+
+Then add the annotation:
+
+`python cvedia_api.py --dataset_index <index_name> --upload examples/annotation.json`
+
 ## Method 2: Upload a combination of images and annotations
 
 #### Concept
@@ -49,3 +59,11 @@ uploaded using the same method.
 
 - `url_example.json`: Contains a few image urls with annotations
 
+#### Running
+
+`python cvedia_api.py --dataset_index <index_name> --upload examples/url_example.json`
+
+## Hints
+
+- Some of CVEDIA ingestion services are asyncronous, meaning that not all you upload will be instantly available, depending on the system load, image type, queues, etc.
+- Ideally you'd upload bulks of json objects containing much information as possible, this way data ingestion would be less fragmented, therefore way faster than sending a million small requests.
