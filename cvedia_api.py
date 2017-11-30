@@ -63,7 +63,7 @@ def upload_file(req_path, fn):
 	else:
 		return False
 
-def api_req(path, method='GET', data=False, files=False, headers=False):
+def api_req(path, method='GET', data=False, files=False, headers=False, json=False):
 	if headers == False:
 		try:
 			headers = def_headers
@@ -73,12 +73,15 @@ def api_req(path, method='GET', data=False, files=False, headers=False):
 	if method == 'GET':
 		r = requests.get('{}/{}/{}'.format(api, api_version, path), headers=headers)
 	elif method == 'POST':
-		if files == False:
+		if json != False:
+			headers['Content-type'] = 'application/json'
+			r = requests.post('{}/{}/{}'.format(api, api_version, path), headers=headers, json=json)
+		elif files == False:
 			r = requests.post('{}/{}/{}'.format(api, api_version, path), headers=headers, data=data)
 		else:
 			r = requests.post('{}/{}/{}'.format(api, api_version, path), headers=headers, data=data, files=files)
 	
-	if r.status_code != 200:
+	if r.status_code >= 300:
 		raise RuntimeError('Unexpected return code {}\nFull reply: {}\n'.format(r.status_code, r.content))
 	
 	if debug:
@@ -103,6 +106,8 @@ parser.add_argument('-f', '--frontend', default="https://cvedia.com", help='Fron
 parser.add_argument('--api_version', type=int, default=1, help='Specifies API version to use')
 parser.add_argument('--register', action='store_true', help='Initiate a interactive client authorization process')
 parser.add_argument('--refresh_token', action='store_true', help='Refresh token for existing registered application')
+
+parser.add_argument('--create_dataset', default=False, help='Creates a new dataset from a json configuration file')
 
 parser.add_argument('--datasets', action='store_true', help='List datasets')
 parser.add_argument('--datasets_categories', action='store_true', help='List datasets categories')
@@ -243,6 +248,22 @@ if refresh_token:
 	
 	output('Token refresh succeeded!')
 	def_headers['Authorization'] = '{} {}'.format(config['token']['token_type'], config['token']['access_token'])
+
+if create_dataset != False:
+	try:
+		if os.stat(create_dataset):
+			dataset_config = json.load(open(create_dataset, 'r'))
+			r = api_req(
+				'public/datasets',
+				method='POST',
+				json=dataset_config
+			)
+			
+			output('Dataset creation result:\n{}'.format(json.dumps(jsonLoad(r.content), indent=4, sort_keys=True)))
+			sys.exit(0)
+	except os.error:
+		output('Unable to load create dataset json file: {}'.format(create_dataset))
+		sys.exit(1)
 
 if datasets:
 	output('Listing datasets...')
