@@ -1,0 +1,7 @@
+{
+	"limit": 1000,
+	"offset": 0,
+	"query": {},
+	"augmentations": {},
+	"sort": "filename asc"
+}
