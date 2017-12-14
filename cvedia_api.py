@@ -327,10 +327,10 @@ if settings.upload_path:
 		else:
 			for folder, subdirs, files in os.walk(path):
 				for fn in files:
-					fns.append(os.path.join(path, fn))
+					fns.append(os.path.join(folder, fn))
 					i = i + 1
 				for subdir in subdirs:
-					settings.upload_path.append(os.path.join(path, subdir))
+					settings.upload_path.append(os.path.join(folder, subdir))
 	
 	cvedia.common.output('Found: {} files in {} folders'.format(i, len(settings.upload_path)))
 	j = 0
