@@ -197,7 +197,7 @@ def api_req(path, method='GET', data=False, files=False, headers=False, json=Fal
 			headers = settings.def_headers
 		except NameError:
 			headers = False
-	
+
 	if method == 'GET':
 		r = requests.get('{}/{}/{}'.format(settings.api, settings.api_version, path), headers=headers)
 	else:

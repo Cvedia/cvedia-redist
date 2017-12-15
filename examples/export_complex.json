@@ -1,7 +1,24 @@
 {
-	"limit": 1000,
+	"limit": 10,
 	"offset": 0,
-	"query": {},
-	"augmentations": {},
+	"export_params": {
+		"mql": {}
+	},
+	"augmentation_params": {
+		"augmentations": {},
+	 	"mapping": [
+	 		{
+	 			"name": "Image1",
+	 			"type": "augmentation",
+	 			"output": {
+	 				"name": "save",
+	 				"format": "jpg",
+	 				"quality": 90,
+	 				"applyto": 0
+	 			},
+	 			"color_override": {}
+	 		}
+	 	]
+	},
 	"sort": "filename asc"
 }
