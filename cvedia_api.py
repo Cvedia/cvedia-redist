@@ -310,6 +310,8 @@ if settings.export:
 			method='POST',
 			json=cvedia.common.jsonLoadFile(settings.export)
 		)
+		
+	#cvedia.common.output(r.content);
 	
 	cvedia.common.output('Result:\n{}'.format(json.dumps(cvedia.common.jsonLoad(r.content), indent=4, sort_keys=True)))
 

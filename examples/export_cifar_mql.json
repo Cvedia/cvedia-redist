@@ -2,7 +2,7 @@
 	"limit": 10,
 	"offset": 0,
 	"export_params": {
-		"mql": ""
+		"mql": "Image.Label = \"cat\""
 	},
 	"augmentation_params": {
 		"augmentations": {},
@@ -20,5 +20,5 @@
 	 		}
 	 	]
 	},
-	"sort": "filename asc"
+	"sort": "added asc"
 }
