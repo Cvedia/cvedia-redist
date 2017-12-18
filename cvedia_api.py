@@ -252,24 +252,24 @@ if settings.export:
 	if not settings.dataset_index:
 		raise RuntimeError('You must define a --dataset_index to export')
 	
-	extra = []
+	extra_body = {}
 	if not settings.scroll or settings.scroll == '1':
 		if settings.per_page:
 			per_page = settings.per_page
 		else:
 			per_page = 1000
 		
-		extra.append('limit={}'.format(per_page))
+		extra_body['limit'] = per_page
 		
 		if settings.page:
 			page = (settings.page - 1)*per_page;
 		else:
 			page = 0
 		
-		extra.append('offset={}'.format(page))
-		
+		extra_body['offset'] = page
+
 		if settings.scroll == '1':
-			extra.append('scroll=1')
+			extra_body['scroll'] = True	
 	else:
 		'''
 		When you do a export without a scroll you can still get the same data, however
@@ -293,25 +293,28 @@ if settings.export:
 		
 		Running a export with offset (page) increments is possible as well.
 		'''
-		extra.append('scroll={}'.format(scroll))
+		extra_body['scroll_id'] = settings.scroll	
 	
-	extra = '?{}'.format('&'.join(extra))
+	
+	file_settings = cvedia.common.jsonLoadFile(settings.export)
+	file_settings.update(extra_body)
+
 	if settings.project:
 		cvedia.common.output('Generating export of project {} for dataset {}...'.format(settings.project, settings.dataset_index))
 		r = cvedia.common.api_req(
-			'public/datasets/{}/exports/{}{}'.format(settings.dataset_index, settings.project, extra),
+			'public/datasets/{}/exports/{}'.format(settings.dataset_index, settings.project),
 			method='POST',
-			json=cvedia.common.jsonLoadFile(settings.export)
+			json=file_settings
 		)
 	else:
 		cvedia.common.output('Generating export for dataset {}...'.format(settings.dataset_index))
 		r = cvedia.common.api_req(
-			'public/datasets/{}/exports{}'.format(settings.dataset_index, extra),
+			'public/datasets/{}/exports'.format(settings.dataset_index),
 			method='POST',
-			json=cvedia.common.jsonLoadFile(settings.export)
+			json=file_settings
 		)
 		
-	#cvedia.common.output(r.content);
+	#cvedia.common.output(r.content)
 	
 	cvedia.common.output('Result:\n{}'.format(json.dumps(cvedia.common.jsonLoad(r.content), indent=4, sort_keys=True)))
 
