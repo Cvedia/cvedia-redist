@@ -317,6 +317,12 @@ if settings.export:
 	#cvedia.common.output(r.content)
 	
 	cvedia.common.output('Result:\n{}'.format(json.dumps(cvedia.common.jsonLoad(r.content), indent=4, sort_keys=True)))
+	
+	if 'X-ScrollID' in r.headers:
+		cvedia.common.output('Scroll ID: {}'.format(r.headers['X-ScrollID']))
+		
+	if 'X-ScrollDuration' in r.headers:
+		cvedia.common.output('Scroll Lifetime: {}s'.format(r.headers['X-ScrollDuration']))	
 
 if settings.upload_path:
 	helpers.resolve_bucket()
