@@ -15,13 +15,11 @@ import itertools
 from . import settings_manager
 from datetime import datetime
 
-_start = False
 settings = False
 
 def init():
-	global settings, _start
+	global settings
 	
-	_start = time.time()
 	settings = settings_manager.Singleton()
 	signal.signal(signal.SIGINT, gracefull_shutdown)
 	atexit.register(gracefull_shutdown)
@@ -139,7 +137,7 @@ def output (s):
 	print ('[{}] {}'.format(datetime.now().strftime("%H:%M:%S.%f"), s))
 
 def gracefull_shutdown():
-	output('Completed, wasted {}s ... BYE'.format(time.time() - _start))
+	output('Completed, wasted {}s ... BYE'.format(time.time() - settings._start))
 
 def chunks(iterable, chunk_size):
 	i = 0;
@@ -197,7 +195,7 @@ def api_req(path, method='GET', data=False, files=False, headers=False, json=Fal
 			headers = settings.def_headers
 		except NameError:
 			headers = False
-
+	
 	if method == 'GET':
 		r = requests.get('{}/{}/{}'.format(settings.api, settings.api_version, path), headers=headers)
 	else:

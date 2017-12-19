@@ -1,5 +1,7 @@
 #!/usr/bin/python
 
+CVEDIA_VERSION = '2.0.1'
+
 import sys
 import time
 import argparse
@@ -16,7 +18,7 @@ from datetime import datetime
 from multiprocessing.dummy import Pool as ThreadPool
 from cvedia import common, helpers, settings_manager
 
-print ('CVEDIA API Tool - v2.0.0\nCopyright (c) 2017 CVEDIA B.V.\n')
+print ('CVEDIA API Tool - v{}\nCopyright (c) 2017 CVEDIA B.V.\n'.format(CVEDIA_VERSION))
 
 parser = argparse.ArgumentParser(
 	formatter_class=argparse.ArgumentDefaultsHelpFormatter,
@@ -79,6 +81,9 @@ parser.add_argument('--debug', action='store_true', help='Shows debug output for
 parser.add_argument('--threads', default=32, type=int, help='Defines a number of threads for parallel operations in general')
 
 settings = cvedia.settings_manager.Singleton()
+settings._start = time.time()
+settings._version = CVEDIA_VERSION
+
 args = parser.parse_args()
 
 for k in args.__dict__:
@@ -267,9 +272,9 @@ if settings.export:
 			page = 0
 		
 		extra_body['offset'] = page
-
+		
 		if settings.scroll == '1':
-			extra_body['scroll'] = True	
+			extra_body['scroll'] = True
 	else:
 		'''
 		When you do a export without a scroll you can still get the same data, however
@@ -293,12 +298,12 @@ if settings.export:
 		
 		Running a export with offset (page) increments is possible as well.
 		'''
-		extra_body['scroll_id'] = settings.scroll	
 	
+	extra_body['scroll_id'] = settings.scroll
 	
 	file_settings = cvedia.common.jsonLoadFile(settings.export)
 	file_settings.update(extra_body)
-
+	
 	if settings.project:
 		cvedia.common.output('Generating export of project {} for dataset {}...'.format(settings.project, settings.dataset_index))
 		r = cvedia.common.api_req(
@@ -314,9 +319,15 @@ if settings.export:
 			json=file_settings
 		)
 		
-	#cvedia.common.output(r.content)
+	# cvedia.common.output(r.content)
+	# cvedia.common.output('Result:\n{}'.format(json.dumps(cvedia.common.jsonLoad(r.content), indent=4, sort_keys=True)))
 	
-	cvedia.common.output('Result:\n{}'.format(json.dumps(cvedia.common.jsonLoad(r.content), indent=4, sort_keys=True)))
+	fon = 'export_output_{}.json'.format(time.time())
+	fo = open(fon, 'w')
+	fo.write(r.content)
+	fo.close()
+	
+	cvedia.common.output('Saved export output to {}'.format(fon))
 	
 	if 'X-ScrollID' in r.headers:
 		cvedia.common.output('Scroll ID: {}'.format(r.headers['X-ScrollID']))
@@ -348,8 +359,8 @@ if settings.upload_path:
 	success = 0
 	fail = 0
 	
-	for cfn in chunks(fns, settings.threads):
-		cvedia.common.output('[{:3.2f}% {}/{} S:{} F:{}] Uploading with {} threads...'.format(100 * (j / i), j, i, success, fail, settings.threads))
+	for cfn in cvedia.common.chunks(fns, settings.threads):
+		cvedia.common.output('[{:3.2f}% {}/{} S:{} F:{}] Uploading with up to {} threads...'.format(100 * (j / i), j, i, success, fail, settings.threads))
 		
 		pool = ThreadPool(settings.threads)
 		results = pool.map(cvedia.common.upload_file_star, zip(itertools.repeat(settings.bucket + '/' + settings.dataset_type), cfn))
