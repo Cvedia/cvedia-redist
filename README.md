@@ -1,13 +1,17 @@
 # Documentation
 
 Full documentation of CVEDIA API is available on https://docs.cvedia.com
+To see all options cvedia_api.py provides, run `python cvedia_api.py --help`
 
 # Quick Start
 
 1. Register the app: `python cvedia_api.py --register`
 2. Create a dataset: `python cvedia_api.py --create_dataset examples/create_dataset.json` -- You might have an error if the name already exists
 3. Upload images to dataset: `python cvedia_api.py --dataset_index <index name> --upload examples/image.json`
-4. Upload annotations to the image: `python cvedia_api.py --dataset_index <index name> --upload examples/annotations.json`
+4. Upload annotations to the image: `python cvedia_api.py --dataset_index <index name> --upload examples/annotation.json`
+5. Bind custom arbitrary values to a image entity: `python cvedia_api.py --dataset_index <index name> --upload examples/image_custom_meta.json`
+6. Replace an existing image with a different one: `python cvedia_api.py --dataset_index <index name> --upload examples/image_replace.json`
+7. Output cifar-10 dataset with augmentations and filters: `python cvedia_api.py --dataset_index cifar-10 --export examples/export_cifar_mql.json`
 
 # What is this
 
