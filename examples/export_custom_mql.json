@@ -1,0 +1,24 @@
+{
+	"limit": 10,
+	"offset": 0,
+	"export_params": {
+		"mql": "custom.key = \"arbitrary_property1\" and custom.value = \"value1\""
+	},
+	"augmentation_params": {
+		"augmentations": {},
+	 	"mapping": [
+	 		{
+	 			"name": "Image1",
+	 			"type": "augmentation",
+	 			"output": {
+	 				"name": "save",
+	 				"format": "jpg",
+	 				"quality": 90,
+	 				"applyto": 0
+	 			},
+	 			"color_override": {}
+	 		}
+	 	]
+	},
+	"sort": "added asc"
+}
