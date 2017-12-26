@@ -212,6 +212,12 @@ def api_req(path, method='GET', data=False, files=False, headers=False, json=Fal
 		else:
 			r = call_func('{}/{}/{}'.format(settings.api, settings.api_version, path), headers=headers, data=data, files=files)
 	
+	if settings.debug:
+		try:
+			output('HTTP Code: {}\nRAW:\n\n{}\n'.format(r.status_code, r.content))
+		except:
+			output('HTTP Code: {}\nRAW: NO DATA\n'.format(r.status_code))
+	
 	if r.status_code >= 500:
 		try:
 			raise RuntimeError('\nError {} from API\nFull reply: {}\n'.format(r.status_code, r.content))
@@ -222,11 +228,5 @@ def api_req(path, method='GET', data=False, files=False, headers=False, json=Fal
 			raise RuntimeError('\nUnexpected return code {}\nFull reply: {}\n'.format(r.status_code, r.content))
 		except:
 			raise RuntimeError('\nUnexpected return code {} from API with NO CONTENT\n'.format(r.status_code))
-	
-	if settings.debug:
-		try:
-			output('HTTP Code: {}\nRAW:\n\n{}\n'.format(r.status_code, r.content))
-		except:
-			output('HTTP Code: {}\nRAW: NO DATA\n'.format(r.status_code))
 	
 	return r
